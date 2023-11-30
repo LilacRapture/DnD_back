@@ -1,9 +1,10 @@
-from typing import Annotated
+from typing import Annotated, Any
 from fastapi import FastAPI, Header, Response, status, Depends
 import uvicorn
 
 from character.list import character_list_handler
-from character.view import character_handler, spell_handler
+from character.view import character_handler
+from spell.view import spell_handler
 
 
 app = FastAPI()
@@ -21,13 +22,13 @@ async def list_characters(response: Response,
 
 
 @app.get("/api/characters/{character_id}")
-async def read_character(character_id: str):
-    return character_handler(character_id)
+async def read_character(character: Annotated[Any, Depends(character_handler)]):
+    return character
 
 
 @app.get("/api/spells/{spell_id}")
-async def read_spell(spell_id: str):
-    return spell_handler(spell_id)
+async def read_spell(spell: Annotated[Any, Depends(spell_handler)]):
+    return spell
 
 
 if __name__ == "__main__":

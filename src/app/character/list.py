@@ -12,4 +12,4 @@ class Character(BaseModel):
 
 
 def character_list_handler(character_service: Annotated[CharacterService, Depends(CharacterService)]):
-    return character_service.list()
+    return character_service.list_characters()
