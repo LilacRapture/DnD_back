@@ -14,9 +14,17 @@ class CharacterClass(BaseModel):
 class Character(BaseModel):
     id: str
     name: str
-    character_class_name: CharacterClass  # id, name
+    character_class: CharacterClass  # id, name
     spells: list[Spell]
 
 
-def character_handler(character_service: Annotated[CharacterService, Depends(CharacterService)]):
-    return character_service.read_character()
+def character_handler(character_id, character_service: Annotated[CharacterService, Depends(CharacterService)]):
+    character = character_service.read_character(character_id)
+    spells = [Spell(id=character.spells[0].id, name=character.spells[0].name),
+              Spell(id=character.spells[1].id, name=character.spells[1].name)]
+    character_dto = Character(id=character.id,
+                              name=character.name,
+                              character_class=CharacterClass(id=character.character_class.id,
+                                                             name=character.character_class.name),
+                              spells=spells)
+    return character_dto

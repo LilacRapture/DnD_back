@@ -10,5 +10,7 @@ class Spell(BaseModel):
     name: str
 
 
-def spell_handler(spell_service: Annotated[SpellService, Depends(SpellService)]):
-    return spell_service.read_spell()
+def spell_handler(spell_id, spell_service: Annotated[SpellService, Depends(SpellService)]):
+    spell = spell_service.read_spell(spell_id)
+    spell_dto = Spell(id=spell.id, name=spell.name)
+    return spell_dto

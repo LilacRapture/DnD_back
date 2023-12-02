@@ -25,10 +25,10 @@ class CharacterService:
 
         return [a, b, c]
 
-    def read_character(self):
+    def read_character(self, character_id):
         j_class = CharacterClass(id="5",
                                  name="Bard")
-        j = Character(id="a1b32133-e947-43a6-b731-e535e66684ad",
+        j = Character(id=character_id,
                       name="Jaskier",
                       character_class=j_class)
         mockery = Spell(id="12",
