@@ -79,15 +79,6 @@ def create_characters():
         session.commit()
 
 
-def select_characters():
-    with Session(engine) as session:
-        statement = select(Character)
-        characters = session.exec(statement)
-        for character in characters:
-            print(character)
-
-
 if __name__ == "__main__":
     SQLModel.metadata.create_all(engine)
     create_characters()
-    select_characters()

@@ -36,13 +36,9 @@ async def read_character(character: Annotated[Any, Depends(character_handler)]):
 
 
 @app.get("/api/spells/{spell_id}")
-async def read_spell(spell_id, spell: Annotated[Any, Depends(spell_handler)]):
+async def read_spell(spell: Annotated[Any, Depends(spell_handler)]):
     return spell
 
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
-# source venv/bin/activate.fish
-# add '.' in imports
-# uvicorn app.run_api:app --host 0.0.0.0 --port 8000
