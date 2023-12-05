@@ -10,14 +10,17 @@ class DataService:
 
     def list_characters(self):
         with Session(self.engine) as session:
-            statement = select(Character)
+            statement = select(Character, CharacterClass).join(CharacterClass)
             characters = session.exec(statement).all()  # all() makes a list instead of a table
 
         return characters
 
     def read_character(self, character_id):
         with Session(self.engine) as session:
-            character = session.get(Character, character_id)  # getting a row by its id column with the primary key
+            # should it be one where with two conditions instead?
+            statement = select(Character, CharacterClass).join(CharacterClass).where(Character.id == character_id)
+            character = session.exec(statement).first()  # .one() if there should be only one
+            # character = session.get(Character, character_id)  # getting a row by its id column with the primary key
 
         return character
 
