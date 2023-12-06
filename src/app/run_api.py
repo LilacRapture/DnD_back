@@ -2,13 +2,17 @@ from typing import Annotated, Any
 from fastapi import FastAPI, Header, Response, status, Depends
 import uvicorn
 from sqlmodel import SQLModel, create_engine
+from automapper import mapper
 
 from character.list import character_list_handler
 from character.view import character_handler
 from spell.view import spell_handler
+from src.business.domain.character.character import Character, CharacterClass
+from src.business.domain.spell.spell import Spell
 
 
 app = FastAPI()
+mapper.add_spec(Character, Character.get_fields)
 
 
 # @app.on_event("startup")

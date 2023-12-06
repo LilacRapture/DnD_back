@@ -8,10 +8,16 @@ class DataService:
     url = f'sqlite:///{db_name}'
     engine = create_engine(url, echo=True)
 
-    def list_characters(self):
+    def list_characters(self) -> list[Character]:
         with Session(self.engine) as session:
             statement = select(Character, CharacterClass).join(CharacterClass)
-            characters = session.exec(statement).all()  # all() makes a list instead of a table
+            characters_with_classes = session.exec(statement).all()  # all() makes a list instead of a table
+            characters = []
+            for character, character_class in characters_with_classes:
+                db_character = Character(id=character.id, name=character.name,
+                                         character_class_id=character_class.id,
+                                         character_class=character_class)
+                characters.append(db_character)
 
         return characters
 
@@ -35,7 +41,6 @@ class DataService:
             spell = session.get(Spell, spell_id)
 
         return spell
-
 
 # req = DataService()
 # print(req.read_character('7af6be76-2a67-43e5-83f1-2b4cb9cf46c3'))
