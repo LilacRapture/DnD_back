@@ -28,7 +28,7 @@ class DataService:
             db_character = Character(id=character.id, name=character.name,
                                      character_class_id=character_class.id,
                                      character_class=character_class)
-            # db_character.spells = character.spells
+            db_character.spells = character.spells
 
         return db_character
 

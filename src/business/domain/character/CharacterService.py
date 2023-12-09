@@ -35,7 +35,8 @@ class CharacterService:
 
         character: Character = mapper.to(Character).map(db_character, fields_mapping={
             "character_class": mapper.to(CharacterClass).map(db_character.character_class)})
+        character.spells = list(map(lambda spell: mapper.to(Spell).map(spell), db_character.spells))
         # character.spells = db_character.spells
-        print(vars(character))
+        # print(vars(character))
 
         return character

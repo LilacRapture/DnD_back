@@ -11,12 +11,12 @@ class Spell(BaseModel):
     id: UUID
     name: str
 
-    @staticmethod
-    def get_fields(cls):
-        return ["id", "name"]
+    # @staticmethod
+    # def get_fields(cls):
+    #     return ["id", "name"]
 
 
-mapper.add_spec(Spell, Spell.get_fields)
+# mapper.add_spec(Spell, Spell.get_fields)
 
 
 def spell_handler(spell_id, spell_service: Annotated[SpellService, Depends(SpellService)]):
