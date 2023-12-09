@@ -23,12 +23,14 @@ class DataService:
 
     def read_character(self, character_id):
         with Session(self.engine) as session:
-            # should it be one where with two conditions instead?
             statement = select(Character, CharacterClass).join(CharacterClass).where(Character.id == character_id)
-            character = session.exec(statement).first()  # .one() if there should be only one
-            # character = session.get(Character, character_id)  # getting a row by its id column with the primary key
+            character, character_class = session.exec(statement).first()  # .one() if there should be only one
+            db_character = Character(id=character.id, name=character.name,
+                                     character_class_id=character_class.id,
+                                     character_class=character_class)
+            # db_character.spells = character.spells
 
-        return character
+        return db_character
 
     def read_character_class(self, character_class_id):
         with Session(self.engine) as session:
@@ -38,9 +40,11 @@ class DataService:
 
     def read_spell(self, spell_id):
         with Session(self.engine) as session:
-            spell = session.get(Spell, spell_id)
+            db_spell = session.get(Spell, spell_id)
+        spell = Spell(id=db_spell.id, name=db_spell.name)
 
         return spell
 
+
 # req = DataService()
-# print(req.read_character('7af6be76-2a67-43e5-83f1-2b4cb9cf46c3'))
+# print(req.read_character("7af6be762a6743e583f12b4cb9cf46c3"))

@@ -1,39 +1,41 @@
 from automapper import mapper
-import pprint
 
 from .character import Character, CharacterClass
 from src.business.domain.spell.spell import Spell
 from src.infrastructure.data.DataService import DataService
+
+mapper.add_spec(Character, Character.get_fields)
+mapper.add_spec(CharacterClass, CharacterClass.get_fields)
+
 
 class CharacterService:
     data = DataService()
 
     def list_characters(self):
         db_characters = self.data.list_characters()
-        print(db_characters[0])
-        character = mapper.to(Character).map(db_characters[0])
-        print(vars(character))
-        characters = map(lambda db_character: mapper.to(Character).map(db_character), db_characters)
-        # print(vars(characters))
-        # characters = []
-        # for db_character_and_class in self.data.list_characters():
-        #     db_character, db_character_class = db_character_and_class
-        #     character_class = CharacterClass(id=db_character_class.id, name=db_character_class.name)
-        #     character = Character(id=db_character.id, name=db_character.name,
-        #                           character_class=character_class)
-        #     characters.append(character)
-        pprint.pprint(characters)
+
+        characters = []
+        for db_character in db_characters:
+            character: Character = mapper.to(Character).map(db_character, fields_mapping={
+                "character_class": mapper.to(CharacterClass).map(db_character.character_class)
+            })
+            characters.append(character)
+
+            # print(vars(character))
+            # print(vars(character.character_class))
+
+        # characters = map(lambda db_char: mapper.to(Character).map(db_char, fields_mapping={
+        #     "character_class": mapper.to(CharacterClass).map(db_char.character_class)
+        # }), db_characters)
 
         return characters
 
     def read_character(self, character_id):
-        db_character, db_character_class = self.data.read_character(character_id)
-        character_class = CharacterClass(id=db_character_class.id, name=db_character_class.name)
-        spells = []
-        for character_spell in db_character.spells:
-            spell = Spell(id=character_spell.id, name=character_spell.name)
-            spells.append(spell)
-        character = Character(id=db_character.id, name=db_character.name, character_class=character_class)
-        character.spells = spells
+        db_character = self.data.read_character(character_id)
+
+        character: Character = mapper.to(Character).map(db_character, fields_mapping={
+            "character_class": mapper.to(CharacterClass).map(db_character.character_class)})
+        # character.spells = db_character.spells
+        print(vars(character))
 
         return character

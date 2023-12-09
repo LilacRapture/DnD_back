@@ -1,5 +1,10 @@
+from automapper import mapper
+
 from .spell import Spell
 from src.infrastructure.data.DataService import DataService
+
+
+mapper.add_spec(Spell, Spell.get_fields)
 
 
 class SpellService:
@@ -7,6 +12,6 @@ class SpellService:
 
     def read_spell(self, spell_id):
         db_spell = self.data.read_spell(spell_id)
-        spell = Spell(id=db_spell.id, name=db_spell.name)
+        spell: Spell = mapper.to(Spell).map(db_spell)
 
         return spell

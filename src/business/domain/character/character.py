@@ -6,6 +6,10 @@ class CharacterClass:
         self.id = id
         self.name = name
 
+    @staticmethod
+    def get_fields(cls):
+        return ["id", "name"]
+
 
 class Character:
     id: str
@@ -20,4 +24,4 @@ class Character:
 
     @staticmethod
     def get_fields(cls):
-        return ["id", "name", "character_class", "spell"]
+        return ["id", "name", "character_class"]

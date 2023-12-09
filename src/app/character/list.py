@@ -3,7 +3,6 @@ from fastapi import Depends
 from pydantic import BaseModel
 from uuid import UUID
 from automapper import mapper
-import json
 
 from src.business.domain.character.CharacterService import CharacterService
 
@@ -14,13 +13,13 @@ class Character(BaseModel):
     character_class_name: str
 
 
+def map_character(character):
+    return mapper.to(Character).map(character, fields_mapping={
+        "character_class_name": character.character_class.name})
+
+
 def character_list_handler(character_service: Annotated[CharacterService, Depends(CharacterService)]):
     characters = character_service.list_characters()
-    characters_dtos = map(lambda db_character: mapper.to(Character).map(db_character), characters)
-    # characters_dtos = []
-    # for character in character_service.list_characters():  # those are not dtos?
-    #     character = Character(id=character.id, name=character.name,
-    #                           character_class_name=character.character_class.name)
-    #     characters_dtos.append(character)
+    characters_dtos = list(map(map_character, characters))
     return characters_dtos
 
