@@ -7,6 +7,7 @@ from automapper import mapper
 from character.list import character_list_handler
 from character.view import character_handler
 from spell.view import spell_handler
+from spell.list import spell_list_handler
 
 
 app = FastAPI()
@@ -34,6 +35,11 @@ async def list_characters(response: Response,
 @app.get("/api/characters/{character_id}")
 async def read_character(character: Annotated[Any, Depends(character_handler)]):
     return character
+
+
+@app.get("/api/spells/")
+async def list_spells(spells: Annotated[list, Depends(spell_list_handler)]):
+    return spells
 
 
 @app.get("/api/spells/{spell_id}")

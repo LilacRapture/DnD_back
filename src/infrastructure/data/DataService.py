@@ -38,6 +38,13 @@ class DataService:
 
         return character_class
 
+    def list_spells(self):
+        with Session(self.engine) as session:
+            statement = select(Spell)
+            spells = session.exec(statement).all()
+
+        return spells
+
     def read_spell(self, spell_id):
         with Session(self.engine) as session:
             db_spell = session.get(Spell, spell_id)
@@ -47,4 +54,4 @@ class DataService:
 
 
 # req = DataService()
-# print(req.read_character("7af6be762a6743e583f12b4cb9cf46c3"))
+# print(req.list_spells())

@@ -21,13 +21,6 @@ class CharacterService:
             })
             characters.append(character)
 
-            # print(vars(character))
-            # print(vars(character.character_class))
-
-        # characters = map(lambda db_char: mapper.to(Character).map(db_char, fields_mapping={
-        #     "character_class": mapper.to(CharacterClass).map(db_char.character_class)
-        # }), db_characters)
-
         return characters
 
     def read_character(self, character_id):
@@ -36,7 +29,5 @@ class CharacterService:
         character: Character = mapper.to(Character).map(db_character, fields_mapping={
             "character_class": mapper.to(CharacterClass).map(db_character.character_class)})
         character.spells = list(map(lambda spell: mapper.to(Spell).map(spell), db_character.spells))
-        # character.spells = db_character.spells
-        # print(vars(character))
 
         return character
