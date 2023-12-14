@@ -6,6 +6,7 @@ from automapper import mapper
 
 from character.list import character_list_handler
 from character.view import character_handler
+from character.create import character_create_handler
 from spell.view import spell_handler
 from spell.list import spell_list_handler
 
@@ -34,6 +35,11 @@ async def list_characters(response: Response,
 
 @app.get("/api/characters/{character_id}")
 async def read_character(character: Annotated[Any, Depends(character_handler)]):
+    return character
+
+
+@app.post("/api/characters/", status_code=201)
+async def create_character(character: Annotated[Any, Depends(character_create_handler)]):
     return character
 
 

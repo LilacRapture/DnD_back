@@ -11,8 +11,8 @@ mapper.add_spec(CharacterClass, CharacterClass.get_fields)
 class CharacterService:
     data = DataService()
 
-    def list_characters(self):
-        db_characters = self.data.list_characters()
+    async def list_characters(self):
+        db_characters = await self.data.list_characters()
 
         characters = []
         for db_character in db_characters:
@@ -23,11 +23,14 @@ class CharacterService:
 
         return characters
 
-    def read_character(self, character_id):
-        db_character = self.data.read_character(character_id)
+    async def read_character(self, character_id):
+        db_character = await self.data.read_character(character_id)
 
         character: Character = mapper.to(Character).map(db_character, fields_mapping={
             "character_class": mapper.to(CharacterClass).map(db_character.character_class)})
         character.spells = list(map(lambda spell: mapper.to(Spell).map(spell), db_character.spells))
 
         return character
+
+    async def create_character(self, character):
+        await self.data.create_character(character)

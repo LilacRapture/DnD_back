@@ -12,7 +12,7 @@ class Spell(BaseModel):
     name: str
 
 
-def spell_list_handler(spell_service: Annotated[SpellService, Depends(SpellService)]):
-    spells = spell_service.list_spells()
+async def spell_list_handler(spell_service: Annotated[SpellService, Depends(SpellService)]):
+    spells = await spell_service.list_spells()
     spell_dtos = list(map(lambda spell: mapper.to(Spell).map(spell), spells))
     return spell_dtos

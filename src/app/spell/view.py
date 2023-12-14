@@ -12,8 +12,8 @@ class Spell(BaseModel):
     name: str
 
 
-def spell_handler(spell_id, spell_service: Annotated[SpellService, Depends(SpellService)]):
-    spell = spell_service.read_spell(spell_id)
+async def spell_handler(spell_id, spell_service: Annotated[SpellService, Depends(SpellService)]):
+    spell = await spell_service.read_spell(spell_id)
     spell_dto: Spell = mapper.to(Spell).map(spell)
 
     return spell_dto

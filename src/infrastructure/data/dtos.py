@@ -1,4 +1,4 @@
-from sqlmodel import Field, Session, SQLModel, create_engine, select, Relationship
+from sqlmodel import Field, Session, SQLModel, create_engine, Relationship
 
 import uuid as uuid_pkg
 
@@ -50,7 +50,7 @@ class Character(ModelBase, table=True):
 
 
 db_name = "database.db"
-url = f'sqlite:///{db_name}'
+url = f'sqlite+aiosqlite:///{db_name}'
 engine = create_engine(url, echo=True)
 
 

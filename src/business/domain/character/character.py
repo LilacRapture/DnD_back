@@ -1,3 +1,6 @@
+from uuid import UUID
+
+
 class CharacterClass:
     id: str
     name: str
@@ -25,3 +28,14 @@ class Character:
     @staticmethod
     def get_fields(cls):
         return ["id", "name", "character_class"]
+
+
+class CharacterCreateDto:
+    id: UUID
+    name: str
+    character_class_id: UUID
+
+    def __init__(self, id, name, character_class_id):
+        self.id = id
+        self.name = name
+        self.character_class_id = character_class_id

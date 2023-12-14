@@ -26,8 +26,8 @@ def create_fields_mapping(character: CharacterModel):
             "spells": list(map(lambda spell: {"id": spell.id, "name": spell.name}, character.spells))}
 
 
-def character_handler(character_id, character_service: Annotated[CharacterService, Depends(CharacterService)]):
-    character = character_service.read_character(character_id)
+async def character_handler(character_id, character_service: Annotated[CharacterService, Depends(CharacterService)]):
+    character = await character_service.read_character(character_id)
     character_dto: Character = mapper.to(Character).map(character, fields_mapping=create_fields_mapping(character))
 
     return character_dto

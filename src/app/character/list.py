@@ -18,8 +18,8 @@ def map_character(character):
         "character_class_name": character.character_class.name})
 
 
-def character_list_handler(character_service: Annotated[CharacterService, Depends(CharacterService)]):
-    characters = character_service.list_characters()
+async def character_list_handler(character_service: Annotated[CharacterService, Depends(CharacterService)]):
+    characters = await character_service.list_characters()
     characters_dtos = list(map(map_character, characters))
     return characters_dtos
 
