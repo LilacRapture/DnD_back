@@ -1,25 +1,16 @@
 from typing import Annotated, Any
 from fastapi import FastAPI, Header, Response, status, Depends
 import uvicorn
-from sqlmodel import SQLModel, create_engine
-from automapper import mapper
 
 from character.list import character_list_handler
 from character.view import character_handler
 from character.create import character_create_handler
+from character.edit import character_edit_handler
 from spell.view import spell_handler
 from spell.list import spell_list_handler
 
 
 app = FastAPI()
-
-
-# @app.on_event("startup")
-# async def startup():
-#     db_name = "database.db"
-#     url = f'sqlite:///{db_name}'
-#     engine = create_engine(url, echo=True)
-#     SQLModel.metadata.create_all(engine)
 
 
 @app.get("/api/characters/")
@@ -33,13 +24,18 @@ async def list_characters(response: Response,
     return characters
 
 
+@app.post("/api/characters/", status_code=201)
+async def create_character(character: Annotated[Any, Depends(character_create_handler)]):
+    return character
+
+
 @app.get("/api/characters/{character_id}")
 async def read_character(character: Annotated[Any, Depends(character_handler)]):
     return character
 
 
-@app.post("/api/characters/", status_code=201)
-async def create_character(character: Annotated[Any, Depends(character_create_handler)]):
+@app.put("/api/characters/")
+async def edit_character(character: Annotated[Any, Depends(character_edit_handler)]):
     return character
 
 

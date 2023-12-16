@@ -34,3 +34,6 @@ class CharacterService:
 
     async def create_character(self, character):
         await self.data.create_character(character)
+
+    async def edit_character(self, character):
+        await self.data.edit_character(character)

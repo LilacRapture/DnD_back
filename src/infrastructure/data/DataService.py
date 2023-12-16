@@ -46,10 +46,23 @@ class DataService:
         return character_class
 
     async def create_character(self, character):
-        db_character = Character(id=character.id, name=character.name, character_class_id=character.character_class_id)
+        db_character = Character(id=character.id, name=character.name,
+                                 character_class_id=character.character_class_id)
         async with AsyncSession(self.engine) as session:
             session.add(db_character)
             await session.commit()
+
+    async def edit_character(self, character):
+        async with AsyncSession(self.engine) as session:
+            db_character = await session.get(Character, character.id)
+            db_character.id = character.id
+            db_character.name = character.name
+            db_character.character_class_id = character.character_class_id
+            session.add(db_character)
+
+            await session.commit()
+            await session.refresh(db_character)
+            print(db_character)
 
     async def list_spells(self):
         async with AsyncSession(self.engine) as session:
