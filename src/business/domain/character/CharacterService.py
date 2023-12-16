@@ -37,3 +37,9 @@ class CharacterService:
 
     async def edit_character(self, character):
         await self.data.edit_character(character)
+
+    async def add_spell_to_character(self, character_id, spell_id):
+        await self.data.add_spell_to_character(character_id, spell_id)
+
+    async def delete_spell_from_character(self, character_id, spell_id):
+        await self.data.delete_spell_from_character(character_id, spell_id)

@@ -1,9 +1,9 @@
-from sqlmodel import select
+from sqlmodel import select, delete
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import selectinload
 
-from .dtos import Character, CharacterClass, Spell
+from .dtos import Character, CharacterClass, Spell, CharacterSpell
 
 
 class DataService:
@@ -78,3 +78,18 @@ class DataService:
         spell = Spell(id=db_spell.id, name=db_spell.name)
 
         return spell
+
+    async def add_spell_to_character(self, character_id, spell_id):
+        db_character_spell = CharacterSpell(character_id=character_id, spell_id=spell_id)
+        async with AsyncSession(self.engine) as session:
+            session.add(db_character_spell)
+            await session.commit()
+
+    async def delete_spell_from_character(self, character_id, spell_id):
+        async with (AsyncSession(self.engine) as session):
+            statement = (select(CharacterSpell)
+                         .where(CharacterSpell.character_id == character_id)
+                         .where(CharacterSpell.spell_id == spell_id))
+            spell_to_delete = (await session.exec(statement)).one()
+            await session.delete(spell_to_delete)
+            await session.commit()

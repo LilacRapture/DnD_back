@@ -6,6 +6,7 @@ from character.list import character_list_handler
 from character.view import character_handler
 from character.create import character_create_handler
 from character.edit import character_edit_handler
+from character.manage_spells import add_spell_to_character_handler, delete_spell_from_character_handler
 from spell.view import spell_handler
 from spell.list import spell_list_handler
 
@@ -42,6 +43,16 @@ async def edit_character(character: Annotated[Any, Depends(character_edit_handle
 @app.get("/api/spells/")
 async def list_spells(spells: Annotated[list, Depends(spell_list_handler)]):
     return spells
+
+
+@app.post("/api/characters/{character_id}/spells/{spell_id}", status_code=201)
+async def add_spell_to_character(_: Annotated[Any, Depends(add_spell_to_character_handler)]):
+    return
+
+
+@app.delete("/api/characters/{character_id}/spells/{spell_id}")
+async def delete_spell_from_character(_: Annotated[Any, Depends(delete_spell_from_character_handler)]):
+    return
 
 
 @app.get("/api/spells/{spell_id}")
