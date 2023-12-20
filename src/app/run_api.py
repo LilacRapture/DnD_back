@@ -2,13 +2,13 @@ from typing import Annotated, Any
 from fastapi import FastAPI, Header, Response, status, Depends
 import uvicorn
 
-from character.list import character_list_handler
-from character.view import character_handler
-from character.create import character_create_handler
-from character.edit import character_edit_handler
-from character.manage_spells import add_spell_to_character_handler, delete_spell_from_character_handler
-from spell.view import spell_handler
-from spell.list import spell_list_handler
+from src.app.character.list import character_list_handler
+from src.app.character.view import character_handler
+from src.app.character.create import character_create_handler
+from src.app.character.edit import character_edit_handler
+from src.app.character.manage_spells import add_spell_to_character_handler, delete_spell_from_character_handler
+from src.app.spell.view import spell_handler
+from src.app.spell.list import spell_list_handler
 
 
 app = FastAPI()
