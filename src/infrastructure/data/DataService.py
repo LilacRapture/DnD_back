@@ -1,4 +1,4 @@
-from sqlmodel import select, delete
+from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import selectinload
@@ -7,8 +7,7 @@ from .dtos import Character, CharacterClass, Spell, CharacterSpell
 
 
 class DataService:
-    db_name = "database.db"
-    url = f'sqlite+aiosqlite:///{db_name}'
+    url = f'postgresql+asyncpg://admin:WQk0R4PRpUWPAoIDNcUd6IanYmeun7Vn@dpg-cm19b4en7f5s73e5k8vg-a.frankfurt-postgres.render.com/main_5owc'
     engine = create_async_engine(url, echo=True)
 
     async def list_characters(self) -> list[Character]:

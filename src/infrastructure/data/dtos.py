@@ -49,8 +49,7 @@ class Character(ModelBase, table=True):
     spells: list["Spell"] = Relationship(back_populates='characters', link_model=CharacterSpell)
 
 
-db_name = "database.db"
-url = f'sqlite+aiosqlite:///{db_name}'
+url = f'postgresql://admin:WQk0R4PRpUWPAoIDNcUd6IanYmeun7Vn@dpg-cm19b4en7f5s73e5k8vg-a.frankfurt-postgres.render.com/main_5owc'
 engine = create_engine(url, echo=True)
 
 
