@@ -49,7 +49,7 @@ class Character(ModelBase, table=True):
     spells: list["Spell"] = Relationship(back_populates='characters', link_model=CharacterSpell)
 
 
-url = f'postgresql://admin:WQk0R4PRpUWPAoIDNcUd6IanYmeun7Vn@dpg-cm19b4en7f5s73e5k8vg-a.frankfurt-postgres.render.com/main_5owc'
+url = f'postgresql+psycopg://admin:WQk0R4PRpUWPAoIDNcUd6IanYmeun7Vn@dpg-cm19b4en7f5s73e5k8vg-a.frankfurt-postgres.render.com/main_5owc'
 engine = create_engine(url, echo=True)
 
 

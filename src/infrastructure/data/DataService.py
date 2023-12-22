@@ -7,7 +7,7 @@ from .dtos import Character, CharacterClass, Spell, CharacterSpell
 
 
 class DataService:
-    url = f'postgresql+asyncpg://admin:WQk0R4PRpUWPAoIDNcUd6IanYmeun7Vn@dpg-cm19b4en7f5s73e5k8vg-a.frankfurt-postgres.render.com/main_5owc'
+    url = f'postgresql+psycopg://admin:WQk0R4PRpUWPAoIDNcUd6IanYmeun7Vn@dpg-cm19b4en7f5s73e5k8vg-a.frankfurt-postgres.render.com/main_5owc'
     engine = create_async_engine(url, echo=True)
 
     async def list_characters(self) -> list[Character]:
