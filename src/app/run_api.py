@@ -2,7 +2,7 @@ from typing import Annotated, Any
 from fastapi import FastAPI, Header, Response, status, Depends
 import uvicorn
 
-from src.app.character.list import character_list_handler
+from src.app.character.list import character_list_handler, character_class_list_handler
 from src.app.character.view import character_handler
 from src.app.character.create import character_create_handler
 from src.app.character.edit import character_edit_handler
@@ -23,6 +23,11 @@ async def list_characters(response: Response,
         return
 
     return characters
+
+
+@app.get("/api/character_classes/")
+async def list_character_classes(character_classes: Annotated[list, Depends(character_class_list_handler)]):
+    return character_classes
 
 
 @app.post("/api/characters/", status_code=201)

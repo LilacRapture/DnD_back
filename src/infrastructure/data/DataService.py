@@ -44,6 +44,14 @@ class DataService:
 
         return character_class
 
+    async def list_character_classes(self):
+        async with AsyncSession(self.engine) as session:
+            statement = select(CharacterClass)
+            result = await session.exec(statement)
+            character_classes = result.all()
+
+        return character_classes
+
     async def create_character(self, character):
         db_character = Character(id=character.id, name=character.name,
                                  character_class_id=character.character_class_id)

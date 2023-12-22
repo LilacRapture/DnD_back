@@ -23,6 +23,13 @@ class CharacterService:
 
         return characters
 
+    async def list_character_classes(self):
+        db_character_classes = await self.data.list_character_classes()
+        character_classes = list(map(lambda character_class:
+                                     mapper.to(CharacterClass).map(character_class), db_character_classes))
+
+        return character_classes
+
     async def read_character(self, character_id):
         db_character = await self.data.read_character(character_id)
 
