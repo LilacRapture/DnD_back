@@ -25,7 +25,7 @@ async def list_characters(response: Response,
     return characters
 
 
-@app.get("/api/character_classes/")
+@app.get("/api/character/classes/")
 async def list_character_classes(character_classes: Annotated[list, Depends(character_class_list_handler)]):
     return character_classes
 
