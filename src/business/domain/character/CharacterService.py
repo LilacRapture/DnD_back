@@ -32,6 +32,8 @@ class CharacterService:
 
     async def read_character(self, character_id):
         db_character = await self.data.read_character(character_id)
+        if db_character is None:
+            return None
 
         character: Character = mapper.to(Character).map(db_character, fields_mapping={
             "character_class": mapper.to(CharacterClass).map(db_character.character_class)})

@@ -30,7 +30,10 @@ class DataService:
                          where(Character.id == character_id).
                          options(selectinload(Character.spells)))  # load relationship
             result = await session.exec(statement)
-            character, character_class = result.first()  # .one() if there should be only one
+            result = result.first()
+            if result is None:
+                return None
+            character, character_class = result  # .one() if there should be only one
             db_character = Character(id=character.id, name=character.name,
                                      character_class_id=character_class.id,
                                      character_class=character_class)

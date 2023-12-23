@@ -37,7 +37,11 @@ async def create_character(character: Annotated[Any, Depends(character_create_ha
 
 
 @app.get("/api/characters/{character_id}")
-async def read_character(character: Annotated[Any, Depends(character_handler)]):
+async def read_character(response: Response,
+                         character: Annotated[Any, Depends(character_handler)]):
+    if character is None:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return
     return character
 
 

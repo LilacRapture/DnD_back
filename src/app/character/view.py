@@ -28,6 +28,8 @@ def create_fields_mapping(character: CharacterModel):
 
 async def character_handler(character_id, character_service: Annotated[CharacterService, Depends(CharacterService)]):
     character = await character_service.read_character(character_id)
-    character_dto: Character = mapper.to(Character).map(character, fields_mapping=create_fields_mapping(character))
+    if character is None:
+        return None
 
+    character_dto: Character = mapper.to(Character).map(character, fields_mapping=create_fields_mapping(character))
     return character_dto
