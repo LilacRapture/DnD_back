@@ -71,6 +71,13 @@ class DataService:
             await session.refresh(db_character)
             print(db_character)
 
+    async def delete_character(self, character_id):
+        async with (AsyncSession(self.engine) as session):
+            character_to_delete = await session.get(Character, character_id)
+            await session.delete(character_to_delete)
+            await session.commit()
+
+
     async def list_spells(self):
         async with AsyncSession(self.engine) as session:
             statement = select(Spell)
