@@ -46,7 +46,7 @@ async def edit_character(character: Annotated[Any, Depends(character_edit_handle
     return character
 
 
-@app.delete("/api/characters/{character_id}/")
+@app.delete("/api/characters/{character_id}")
 async def delete_character(_: Annotated[Any, Depends(character_delete_handler)]):
     return
 
