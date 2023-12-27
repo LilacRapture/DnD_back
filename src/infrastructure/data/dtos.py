@@ -1,4 +1,5 @@
-from sqlmodel import Field, Session, SQLModel, create_engine, Relationship
+from sqlmodel import Field, Session, SQLModel, create_engine, Relationship, UniqueConstraint
+from typing import Optional
 
 import uuid as uuid_pkg
 
@@ -15,12 +16,21 @@ class ModelBase(SQLModel):
     )
 
 
+class User(ModelBase, table=True):
+    name: Optional[str] = Field(nullable=True)
+    email: Optional[str] = Field(nullable=True)
+    password: Optional[str] = Field(nullable=True)
+
+
 class CharacterClassSpell(ModelBase, table=True):
     character_class_id: uuid_pkg.UUID = Field(foreign_key='character_class.id')
     spell_id: uuid_pkg.UUID = Field(foreign_key='spell.id')
 
 
 class CharacterSpell(ModelBase, table=True):
+    __table_args__ = (
+        UniqueConstraint("character_id", "spell_id"),
+    )
     character_id: uuid_pkg.UUID = Field(foreign_key='character.id')
     spell_id: uuid_pkg.UUID = Field(foreign_key='spell.id')
 

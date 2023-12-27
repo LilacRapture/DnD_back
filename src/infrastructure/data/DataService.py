@@ -3,12 +3,19 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import selectinload
 
-from .dtos import Character, CharacterClass, Spell, CharacterSpell
+from .dtos import User, Character, CharacterClass, Spell, CharacterSpell
 
 
 class DataService:
     url = f'postgresql+psycopg://admin:WQk0R4PRpUWPAoIDNcUd6IanYmeun7Vn@dpg-cm19b4en7f5s73e5k8vg-a.frankfurt-postgres.render.com/main_5owc'
     engine = create_async_engine(url, echo=True)
+
+    async def create_user(self):
+        db_user = User()
+        async with AsyncSession(self.engine) as session:
+            session.add(db_user)
+            await session.commit()
+        return db_user.id
 
     async def list_characters(self) -> list[Character]:
         async with AsyncSession(self.engine) as session:
@@ -80,7 +87,6 @@ class DataService:
             await session.delete(character_to_delete)
             await session.commit()
 
-
     async def list_spells(self):
         async with AsyncSession(self.engine) as session:
             statement = select(Spell)
@@ -107,6 +113,6 @@ class DataService:
             statement = (select(CharacterSpell)
                          .where(CharacterSpell.character_id == character_id)
                          .where(CharacterSpell.spell_id == spell_id))
-            spell_to_delete = (await session.exec(statement)).one()
+            spell_to_delete = (await session.exec(statement)).all()
             await session.delete(spell_to_delete)
             await session.commit()

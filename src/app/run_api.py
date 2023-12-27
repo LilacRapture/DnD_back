@@ -2,6 +2,7 @@ from typing import Annotated, Any
 from fastapi import FastAPI, Header, Response, status, Depends
 import uvicorn
 
+from src.app.user.create import user_create_handler, UserDto
 from src.app.character.list import character_list_handler, character_class_list_handler
 from src.app.character.view import character_handler
 from src.app.character.create import character_create_handler
@@ -13,6 +14,11 @@ from src.app.spell.list import spell_list_handler
 
 
 app = FastAPI()
+
+
+@app.post("/api/auth/sign-up")
+async def create_user(user: Annotated[UserDto, Depends(user_create_handler)]):
+    return user
 
 
 @app.get("/api/characters/")
@@ -27,18 +33,21 @@ async def list_characters(response: Response,
 
 
 @app.get("/api/character/classes/")
-async def list_character_classes(character_classes: Annotated[list, Depends(character_class_list_handler)]):
+async def list_character_classes(character_classes: Annotated[list, Depends(character_class_list_handler)],
+                                 x_dnd_auth: Annotated[str | None, Header()] = None):
     return character_classes
 
 
 @app.post("/api/characters/", status_code=201)
-async def create_character(character: Annotated[Any, Depends(character_create_handler)]):
+async def create_character(character: Annotated[Any, Depends(character_create_handler)],
+                           x_dnd_auth: Annotated[str | None, Header()] = None):
     return character
 
 
 @app.get("/api/characters/{character_id}")
 async def read_character(response: Response,
-                         character: Annotated[Any, Depends(character_handler)]):
+                         character: Annotated[Any, Depends(character_handler)],
+                         x_dnd_auth: Annotated[str | None, Header()] = None):
     if character is None:
         response.status_code = status.HTTP_404_NOT_FOUND
         return
@@ -46,32 +55,38 @@ async def read_character(response: Response,
 
 
 @app.put("/api/characters/")
-async def edit_character(character: Annotated[Any, Depends(character_edit_handler)]):
+async def edit_character(character: Annotated[Any, Depends(character_edit_handler)],
+                         x_dnd_auth: Annotated[str | None, Header()] = None):
     return character
 
 
 @app.delete("/api/characters/{character_id}")
-async def delete_character(_: Annotated[Any, Depends(character_delete_handler)]):
+async def delete_character(_: Annotated[Any, Depends(character_delete_handler)],
+                           x_dnd_auth: Annotated[str | None, Header()] = None):
     return
 
 
 @app.get("/api/spells/")
-async def list_spells(spells: Annotated[list, Depends(spell_list_handler)]):
+async def list_spells(spells: Annotated[list, Depends(spell_list_handler)],
+                      x_dnd_auth: Annotated[str | None, Header()] = None):
     return spells
 
 
 @app.post("/api/characters/{character_id}/spells/{spell_id}", status_code=201)
-async def add_spell_to_character(_: Annotated[Any, Depends(add_spell_to_character_handler)]):
+async def add_spell_to_character(_: Annotated[Any, Depends(add_spell_to_character_handler)],
+                                 x_dnd_auth: Annotated[str | None, Header()] = None):
     return
 
 
 @app.delete("/api/characters/{character_id}/spells/{spell_id}")
-async def delete_spell_from_character(_: Annotated[Any, Depends(delete_spell_from_character_handler)]):
+async def delete_spell_from_character(_: Annotated[Any, Depends(delete_spell_from_character_handler)],
+                                      x_dnd_auth: Annotated[str | None, Header()] = None):
     return
 
 
 @app.get("/api/spells/{spell_id}")
-async def read_spell(spell: Annotated[Any, Depends(spell_handler)]):
+async def read_spell(spell: Annotated[Any, Depends(spell_handler)],
+                     x_dnd_auth: Annotated[str | None, Header()] = None):
     return spell
 
 

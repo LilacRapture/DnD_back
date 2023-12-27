@@ -11,6 +11,9 @@ mapper.add_spec(CharacterClass, CharacterClass.get_fields)
 class CharacterService:
     data = DataService()
 
+    async def create_user(self):
+        return self.data.create_user()
+
     async def list_characters(self):
         db_characters = await self.data.list_characters()
 
