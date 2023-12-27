@@ -2,6 +2,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import selectinload
+from uuid import UUID
 
 from .dtos import User, Character, CharacterClass, Spell, CharacterSpell
 
@@ -17,9 +18,9 @@ class DataService:
             await session.commit()
         return db_user.id
 
-    async def list_characters(self) -> list[Character]:
+    async def list_characters(self, user_id: UUID) -> list[Character]:
         async with AsyncSession(self.engine) as session:
-            statement = select(Character, CharacterClass).join(CharacterClass)
+            statement = select(Character, CharacterClass).join(CharacterClass).where(Character.user_id == user_id)
             characters_with_classes = (await session.exec(statement)).all()  # all() makes a list instead of a table
             characters = []
             for character, character_class in characters_with_classes:
@@ -30,7 +31,7 @@ class DataService:
 
         return characters
 
-    async def read_character(self, character_id):
+    async def read_character(self, character_id: UUID):
         async with AsyncSession(self.engine) as session:
             statement = (select(Character, CharacterClass).
                          join(CharacterClass).
@@ -48,7 +49,7 @@ class DataService:
 
         return db_character
 
-    async def read_character_class(self, character_class_id):
+    async def read_character_class(self, character_class_id: UUID):
         async with AsyncSession(self.engine) as session:
             character_class = await session.get(CharacterClass, character_class_id)
 
@@ -81,7 +82,7 @@ class DataService:
             await session.refresh(db_character)
             print(db_character)
 
-    async def delete_character(self, character_id):
+    async def delete_character(self, character_id: UUID):
         async with (AsyncSession(self.engine) as session):
             character_to_delete = await session.get(Character, character_id)
             await session.delete(character_to_delete)
@@ -95,20 +96,20 @@ class DataService:
 
         return spells
 
-    async def read_spell(self, spell_id):
+    async def read_spell(self, spell_id: UUID):
         async with AsyncSession(self.engine) as session:
             db_spell = await session.get(Spell, spell_id)
         spell = Spell(id=db_spell.id, name=db_spell.name)
 
         return spell
 
-    async def add_spell_to_character(self, character_id, spell_id):
+    async def add_spell_to_character(self, character_id: UUID, spell_id: UUID):
         db_character_spell = CharacterSpell(character_id=character_id, spell_id=spell_id)
         async with AsyncSession(self.engine) as session:
             session.add(db_character_spell)
             await session.commit()
 
-    async def delete_spell_from_character(self, character_id, spell_id):
+    async def delete_spell_from_character(self, character_id: UUID, spell_id: UUID):
         async with (AsyncSession(self.engine) as session):
             statement = (select(CharacterSpell)
                          .where(CharacterSpell.character_id == character_id)

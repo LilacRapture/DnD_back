@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import Depends
+from fastapi import Depends, Header
 from pydantic import BaseModel
 from uuid import UUID
 from automapper import mapper
@@ -23,8 +23,9 @@ def map_character(character):
         "character_class_name": character.character_class.name})
 
 
-async def character_list_handler(character_service: Annotated[CharacterService, Depends(CharacterService)]):
-    characters = await character_service.list_characters()
+async def character_list_handler(character_service: Annotated[CharacterService, Depends(CharacterService)],
+                                 x_dnd_auth: Annotated[str | None, Header()] = None):
+    characters = await character_service.list_characters(UUID(x_dnd_auth))
     characters_dtos = list(map(map_character, characters))
     return characters_dtos
 

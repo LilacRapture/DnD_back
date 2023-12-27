@@ -26,7 +26,8 @@ def create_fields_mapping(character: CharacterModel):
             "spells": list(map(lambda spell: {"id": spell.id, "name": spell.name}, character.spells))}
 
 
-async def character_handler(character_id, character_service: Annotated[CharacterService, Depends(CharacterService)]):
+async def character_handler(character_id,
+                            character_service: Annotated[CharacterService, Depends(CharacterService)],):
     character = await character_service.read_character(character_id)
     if character is None:
         return None

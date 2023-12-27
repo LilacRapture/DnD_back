@@ -1,4 +1,5 @@
 from automapper import mapper
+from uuid import UUID
 
 from .character import Character, CharacterClass
 from src.business.domain.spell.spell import Spell
@@ -14,8 +15,8 @@ class CharacterService:
     async def create_user(self):
         return self.data.create_user()
 
-    async def list_characters(self):
-        db_characters = await self.data.list_characters()
+    async def list_characters(self, user_id: UUID):
+        db_characters = await self.data.list_characters(user_id)
 
         characters = []
         for db_character in db_characters:
@@ -33,7 +34,7 @@ class CharacterService:
 
         return character_classes
 
-    async def read_character(self, character_id):
+    async def read_character(self, character_id: UUID):
         db_character = await self.data.read_character(character_id)
         if db_character is None:
             return None
@@ -50,11 +51,11 @@ class CharacterService:
     async def edit_character(self, character):
         await self.data.edit_character(character)
 
-    async def delete_character(self, character_id):
+    async def delete_character(self, character_id: UUID):
         await self.data.delete_character(character_id)
 
-    async def add_spell_to_character(self, character_id, spell_id):
+    async def add_spell_to_character(self, character_id: UUID, spell_id: UUID):
         await self.data.add_spell_to_character(character_id, spell_id)
 
-    async def delete_spell_from_character(self, character_id, spell_id):
+    async def delete_spell_from_character(self, character_id: UUID, spell_id: UUID):
         await self.data.delete_spell_from_character(character_id, spell_id)
