@@ -3,6 +3,7 @@ from fastapi import FastAPI, Header, Response, status, Depends
 import uvicorn
 
 from src.app.user.create import user_create_handler, UserDto
+from src.app.user.delete import user_delete_handler
 from src.app.character.list import character_list_handler, character_class_list_handler
 from src.app.character.view import character_handler
 from src.app.character.create import character_create_handler
@@ -19,6 +20,11 @@ app = FastAPI()
 @app.post("/api/auth/sign-up")
 async def create_user(user: Annotated[UserDto, Depends(user_create_handler)]):
     return user
+
+
+@app.delete("/api/users/{user_id}")
+async def delete_user(_: Annotated[UserDto, Depends(user_delete_handler)]):
+    return
 
 
 @app.get("/api/characters/")
@@ -91,4 +97,5 @@ async def read_spell(spell: Annotated[Any, Depends(spell_handler)],
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # uvicorn.run(app, host="0.0.0.0", port=8000)  # for prod
+    uvicorn.run("run_api:app", host="0.0.0.0", port=8000, reload=True)  # for development

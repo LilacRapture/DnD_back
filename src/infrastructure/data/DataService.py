@@ -13,10 +13,17 @@ class DataService:
 
     async def create_user(self):
         db_user = User()
+        user_id = db_user.id
         async with AsyncSession(self.engine) as session:
             session.add(db_user)
             await session.commit()
-        return db_user.id
+        return user_id
+
+    async def delete_user(self, user_id: UUID):
+        async with AsyncSession(self.engine) as session:
+            user_to_delete = await session.get(User, user_id)
+            await session.delete(user_to_delete)
+            await session.commit()
 
     async def list_characters(self, user_id: UUID) -> list[Character]:
         async with AsyncSession(self.engine) as session:
@@ -80,7 +87,6 @@ class DataService:
 
             await session.commit()
             await session.refresh(db_character)
-            print(db_character)
 
     async def delete_character(self, character_id: UUID):
         async with (AsyncSession(self.engine) as session):
