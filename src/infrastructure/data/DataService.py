@@ -122,6 +122,6 @@ class DataService:
             statement = (select(CharacterSpell)
                          .where(CharacterSpell.character_id == character_id)
                          .where(CharacterSpell.spell_id == spell_id))
-            spell_to_delete = (await session.exec(statement)).all()
+            spell_to_delete = (await session.exec(statement)).first()
             await session.delete(spell_to_delete)
             await session.commit()
