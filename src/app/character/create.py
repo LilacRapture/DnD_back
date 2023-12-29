@@ -21,4 +21,5 @@ async def character_create_handler(character_create_api_dto: CharacterCreateApiD
                                                        user_id=UUID(x_dnd_auth),
                                                        character_class_id=character_create_api_dto.character_class_id)
     await character_service.create_character(character)
-    return {"id": character.id}
+    # return {"id": character.id}
+    return character
