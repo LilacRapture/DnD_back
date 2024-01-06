@@ -8,7 +8,7 @@ from .dtos import User, Character, CharacterClass, Spell, CharacterSpell
 
 
 class DataService:
-    url = f'postgresql+psycopg://admin:WQk0R4PRpUWPAoIDNcUd6IanYmeun7Vn@dpg-cm19b4en7f5s73e5k8vg-a.frankfurt-postgres.render.com/main_5owc'
+    url = 'postgresql+psycopg://admin:WQk0R4PRpUWPAoIDNcUd6IanYmeun7Vn@dpg-cm19b4en7f5s73e5k8vg-a.frankfurt-postgres.render.com/main_5owc'
     engine = create_async_engine(url, echo=True)
 
     async def create_user(self):
@@ -55,6 +55,8 @@ class DataService:
             db_character.spells = character.spells
 
         return db_character
+
+    # add list character classes list
 
     async def read_character_class(self, character_class_id: UUID):
         async with AsyncSession(self.engine) as session:

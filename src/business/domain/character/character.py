@@ -1,17 +1,5 @@
 from uuid import UUID
-
-
-class CharacterClass:
-    id: str
-    name: str
-
-    def __init__(self, id, name):
-        self.id = id
-        self.name = name
-
-    @staticmethod
-    def get_fields(cls):
-        return ["id", "name"]
+from src.business.domain.character_class.CharacterClass import CharacterClass
 
 
 class Character:

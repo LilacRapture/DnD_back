@@ -1,20 +1,29 @@
 from typing import Annotated, Any
 from fastapi import FastAPI, Header, Response, status, Depends
 import uvicorn
+from mediatr import Mediator
+
+from src.app.utils.DiContainer import DiContainer
 
 from src.app.user.create import user_create_handler, UserDto
 from src.app.user.delete import user_delete_handler
-from src.app.character.list import character_list_handler, character_class_list_handler
+from src.app.character.list import character_list_handler
 from src.app.character.view import character_handler
 from src.app.character.create import character_create_handler
 from src.app.character.edit import character_edit_handler
 from src.app.character.delete import character_delete_handler
+from src.business.domain.character_class.use_cases.list import ListCharacterClassesRequest
 from src.app.character.manage_spells import add_spell_to_character_handler, delete_spell_from_character_handler
 from src.app.spell.view import spell_handler
 from src.app.spell.list import spell_list_handler
 
+# update spells list with character class parameter
+
 
 app = FastAPI()
+container = DiContainer()
+container.wire(packages=["src.business", "src.infrastructure"])
+# container.init_resources()
 
 
 @app.post("/api/auth/sign-up")
@@ -38,9 +47,10 @@ async def list_characters(response: Response,
     return characters
 
 
-@app.get("/api/character/classes/")
-async def list_character_classes(character_classes: Annotated[list, Depends(character_class_list_handler)],
+@app.get("/api/character-classes/")
+async def list_character_classes(mediator: Annotated[Mediator, Depends(Mediator)],
                                  x_dnd_auth: Annotated[str | None, Header()] = None):
+    character_classes = await mediator.send_async(ListCharacterClassesRequest())
     return character_classes
 
 
