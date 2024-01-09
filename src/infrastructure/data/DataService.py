@@ -38,10 +38,11 @@ class DataService:
 
         return characters
 
-    async def read_character(self, character_id: UUID):
+    async def read_character(self, user_id: UUID, character_id: UUID):
         async with AsyncSession(self.engine) as session:
             statement = (select(Character, CharacterClass).
                          join(CharacterClass).
+                         where(User.id == user_id).
                          where(Character.id == character_id).
                          options(selectinload(Character.spells)))  # load relationship
             result = await session.exec(statement)

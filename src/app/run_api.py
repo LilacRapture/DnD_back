@@ -12,10 +12,15 @@ from src.app.character.view import character_handler
 from src.app.character.create import character_create_handler
 from src.app.character.edit import character_edit_handler
 from src.app.character.delete import character_delete_handler
-from src.business.domain.character_class.use_cases.list import ListCharacterClassesRequest
 from src.app.character.manage_spells import add_spell_to_character_handler, delete_spell_from_character_handler
 from src.app.spell.view import spell_handler
 from src.app.spell.list import spell_list_handler
+
+from src.business.domain.user.use_cases.create import CreateUserRequest
+from src.business.domain.user.use_cases.delete import DeleteUserRequest
+from src.business.domain.character.use_cases.list import ListCharactersRequest
+from src.business.domain.character.use_cases.read import ReadCharacterRequest
+from src.business.domain.character_class.use_cases.list import ListCharacterClassesRequest
 
 # update spells list with character class parameter
 
@@ -23,33 +28,35 @@ from src.app.spell.list import spell_list_handler
 app = FastAPI()
 container = DiContainer()
 container.wire(packages=["src.business", "src.infrastructure"])
-# container.init_resources()
+container.init_resources()
 
 
 @app.post("/api/auth/sign-up")
-async def create_user(user: Annotated[UserDto, Depends(user_create_handler)]):
-    return user
+async def create_user(mediator: Annotated[Mediator, Depends(Mediator)]):
+    return await mediator.send_async(CreateUserRequest())
 
 
 @app.delete("/api/users/{user_id}")
-async def delete_user(_: Annotated[UserDto, Depends(user_delete_handler)]):
-    return
+async def delete_user(user_id,
+                      mediator: Annotated[Mediator, Depends(Mediator)],
+                      x_dnd_auth: Annotated[str | None, Header()] = None):
+    await mediator.send_async(DeleteUserRequest(user_id))
 
 
 @app.get("/api/characters/")
 async def list_characters(response: Response,
-                          characters: Annotated[list, Depends(character_list_handler)],
+                          mediator: Annotated[Mediator, Depends(Mediator)],
                           x_dnd_auth: Annotated[str | None, Header()] = None):
     if x_dnd_auth is None:
         response.status_code = status.HTTP_401_UNAUTHORIZED
         return
 
+    characters = await mediator.send_async(ListCharactersRequest(x_dnd_auth))
     return characters
 
 
 @app.get("/api/character-classes/")
-async def list_character_classes(mediator: Annotated[Mediator, Depends(Mediator)],
-                                 x_dnd_auth: Annotated[str | None, Header()] = None):
+async def list_character_classes(mediator: Annotated[Mediator, Depends(Mediator)]):
     character_classes = await mediator.send_async(ListCharacterClassesRequest())
     return character_classes
 
@@ -60,10 +67,23 @@ async def create_character(character: Annotated[Any, Depends(character_create_ha
     return character
 
 
+# @app.get("/api/characters/{character_id}")
+# async def read_character(response: Response,
+#                          character: Annotated[Any, Depends(character_handler)],
+#                          x_dnd_auth: Annotated[str | None, Header()] = None):
+#     if character is None:
+#         response.status_code = status.HTTP_404_NOT_FOUND
+#         return
+#     return character
+
+
 @app.get("/api/characters/{character_id}")
-async def read_character(response: Response,
-                         character: Annotated[Any, Depends(character_handler)],
+async def read_character(character_id,
+                         response: Response,
+                         mediator: Annotated[Mediator, Depends(Mediator)],
                          x_dnd_auth: Annotated[str | None, Header()] = None):
+
+    character = await mediator.send_async(ReadCharacterRequest(x_dnd_auth, character_id))
     if character is None:
         response.status_code = status.HTTP_404_NOT_FOUND
         return

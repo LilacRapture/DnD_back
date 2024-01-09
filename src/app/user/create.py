@@ -13,5 +13,4 @@ class UserDto(BaseModel):
 async def user_create_handler(user_service: Annotated[UserService, Depends(UserService)]):
     user_id = await user_service.create_user()
     user = UserDto(token=str(user_id))
-    print(user)
     return user

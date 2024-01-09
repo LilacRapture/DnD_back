@@ -22,5 +22,4 @@ async def list_character_classes_handler(data_service: DataService = Provide[DiC
 
 @Mediator.handler
 def list_character_classes_handler_wrapper(request: ListCharacterClassesRequest):
-    print('hello')
     return list_character_classes_handler()
