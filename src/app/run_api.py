@@ -22,6 +22,8 @@ from src.business.domain.character.use_cases.list import ListCharactersRequest
 from src.business.domain.character.use_cases.read import ReadCharacterRequest
 from src.business.domain.character.use_cases.delete import DeleteCharacterRequest
 from src.business.domain.character_class.use_cases.list import ListCharacterClassesRequest
+from src.business.domain.spell.use_cases.list import ListSpellsRequest
+from src.business.domain.spell.use_cases.read import ReadSpellRequest
 
 # update spells list with character class parameter
 
@@ -97,12 +99,6 @@ async def edit_character(character: Annotated[Any, Depends(character_edit_handle
     return character
 
 
-# @app.delete("/api/characters/{character_id}")
-# async def delete_character(_: Annotated[Any, Depends(character_delete_handler)],
-#                            x_dnd_auth: Annotated[str | None, Header()] = None):
-#     return
-
-
 @app.delete("/api/characters/{character_id}")
 async def delete_character(character_id,
                            mediator: Annotated[Mediator, Depends(Mediator)],
@@ -111,8 +107,8 @@ async def delete_character(character_id,
 
 
 @app.get("/api/spells/")
-async def list_spells(spells: Annotated[list, Depends(spell_list_handler)],
-                      x_dnd_auth: Annotated[str | None, Header()] = None):
+async def list_spells(mediator: Annotated[Mediator, Depends(Mediator)]):
+    spells = await mediator.send_async(ListSpellsRequest())
     return spells
 
 
@@ -129,8 +125,9 @@ async def delete_spell_from_character(_: Annotated[Any, Depends(delete_spell_fro
 
 
 @app.get("/api/spells/{spell_id}")
-async def read_spell(spell: Annotated[Any, Depends(spell_handler)],
-                     x_dnd_auth: Annotated[str | None, Header()] = None):
+async def read_spell(spell_id,
+                     mediator: Annotated[Mediator, Depends(Mediator)]):
+    spell = await mediator.send_async(ReadSpellRequest(spell_id))
     return spell
 
 
