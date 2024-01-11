@@ -10,8 +10,8 @@ from src.infrastructure.data.DataService import DataService
 
 
 class ReadCharacterRequest:
-    user_id: UUID
-    character_id: UUID
+    user_id: str
+    character_id: str
 
     def __init__(self, user_id, character_id):
         self.user_id = user_id

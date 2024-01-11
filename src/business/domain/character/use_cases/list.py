@@ -9,6 +9,8 @@ from src.infrastructure.data.DataService import DataService
 
 
 class ListCharactersRequest:
+    user_id: str
+
     def __init__(self, id):
         self.user_id = id
 

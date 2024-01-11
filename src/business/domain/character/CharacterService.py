@@ -31,16 +31,16 @@ class CharacterService:
     #
     #     return character_classes
 
-    async def read_character(self, user_id: UUID, character_id: UUID):
-        db_character = await self.data.read_character(user_id, character_id)
-        if db_character is None:
-            return None
-
-        character: Character = mapper.to(Character).map(db_character, fields_mapping={
-            "character_class": mapper.to(CharacterClass).map(db_character.character_class)})
-        character.spells = list(map(lambda spell: mapper.to(Spell).map(spell), db_character.spells))
-
-        return character
+    # async def read_character(self, user_id: UUID, character_id: UUID):
+    #     db_character = await self.data.read_character(user_id, character_id)
+    #     if db_character is None:
+    #         return None
+    #
+    #     character: Character = mapper.to(Character).map(db_character, fields_mapping={
+    #         "character_class": mapper.to(CharacterClass).map(db_character.character_class)})
+    #     character.spells = list(map(lambda spell: mapper.to(Spell).map(spell), db_character.spells))
+    #
+    #     return character
 
     async def create_character(self, character):
         await self.data.create_character(character)

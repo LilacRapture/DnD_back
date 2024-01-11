@@ -20,6 +20,7 @@ from src.business.domain.user.use_cases.create import CreateUserRequest
 from src.business.domain.user.use_cases.delete import DeleteUserRequest
 from src.business.domain.character.use_cases.list import ListCharactersRequest
 from src.business.domain.character.use_cases.read import ReadCharacterRequest
+from src.business.domain.character.use_cases.delete import DeleteCharacterRequest
 from src.business.domain.character_class.use_cases.list import ListCharacterClassesRequest
 
 # update spells list with character class parameter
@@ -40,7 +41,7 @@ async def create_user(mediator: Annotated[Mediator, Depends(Mediator)]):
 async def delete_user(user_id,
                       mediator: Annotated[Mediator, Depends(Mediator)],
                       x_dnd_auth: Annotated[str | None, Header()] = None):
-    await mediator.send_async(DeleteUserRequest(user_id))
+    await mediator.send_async(DeleteUserRequest(user_id))  # user_id is x-dnd-auth
 
 
 @app.get("/api/characters/")
@@ -96,10 +97,17 @@ async def edit_character(character: Annotated[Any, Depends(character_edit_handle
     return character
 
 
+# @app.delete("/api/characters/{character_id}")
+# async def delete_character(_: Annotated[Any, Depends(character_delete_handler)],
+#                            x_dnd_auth: Annotated[str | None, Header()] = None):
+#     return
+
+
 @app.delete("/api/characters/{character_id}")
-async def delete_character(_: Annotated[Any, Depends(character_delete_handler)],
+async def delete_character(character_id,
+                           mediator: Annotated[Mediator, Depends(Mediator)],
                            x_dnd_auth: Annotated[str | None, Header()] = None):
-    return
+    await mediator.send_async(DeleteCharacterRequest(x_dnd_auth, character_id))
 
 
 @app.get("/api/spells/")

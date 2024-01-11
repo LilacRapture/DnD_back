@@ -42,7 +42,7 @@ class DataService:
         async with AsyncSession(self.engine) as session:
             statement = (select(Character, CharacterClass).
                          join(CharacterClass).
-                         where(User.id == user_id).
+                         where(Character.user_id == user_id).
                          where(Character.id == character_id).
                          options(selectinload(Character.spells)))  # load relationship
             result = await session.exec(statement)
@@ -93,9 +93,12 @@ class DataService:
             await session.commit()
             await session.refresh(db_character)
 
-    async def delete_character(self, character_id: UUID):
-        async with (AsyncSession(self.engine) as session):
-            character_to_delete = await session.get(Character, character_id)
+    async def delete_character(self, user_id: UUID, character_id: UUID):
+        async with AsyncSession(self.engine) as session:
+            statement = (select(Character).
+                         where(Character.user_id == user_id).
+                         where(Character.id == character_id))
+            character_to_delete = (await session.exec(statement)).one()
             await session.delete(character_to_delete)
             await session.commit()
 
