@@ -9,7 +9,7 @@ from src.infrastructure.data.DataService import DataService
 
 
 class ReadSpellRequest:
-    spell_id: str
+    spell_id: UUID
 
     def __init__(self, spell_id):
         self.spell_id = spell_id
@@ -26,5 +26,4 @@ async def read_spell_handler(spell_id: UUID,
 
 @Mediator.handler
 def read_spell_handler_wrapper(request: ReadSpellRequest):
-    spell_id = UUID(request.spell_id)
-    return read_spell_handler(spell_id)
+    return read_spell_handler(request.spell_id)

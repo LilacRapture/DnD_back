@@ -1,26 +1,21 @@
 from typing import Annotated, Any
-from fastapi import FastAPI, Header, Response, status, Depends
+from fastapi import FastAPI, Header, Response, status, Depends, Request, HTTPException
 import uvicorn
 from mediatr import Mediator
+from uuid import UUID
 
 from src.app.utils.DiContainer import DiContainer
 
-from src.app.user.create import user_create_handler, UserDto
-from src.app.user.delete import user_delete_handler
-from src.app.character.list import character_list_handler
-from src.app.character.view import character_handler
 from src.app.character.create import character_create_handler
 from src.app.character.edit import character_edit_handler
-from src.app.character.delete import character_delete_handler
-from src.app.character.manage_spells import add_spell_to_character_handler, delete_spell_from_character_handler
-from src.app.spell.view import spell_handler
-from src.app.spell.list import spell_list_handler
 
 from src.business.domain.user.use_cases.create import CreateUserRequest
 from src.business.domain.user.use_cases.delete import DeleteUserRequest
 from src.business.domain.character.use_cases.list import ListCharactersRequest
 from src.business.domain.character.use_cases.read import ReadCharacterRequest
 from src.business.domain.character.use_cases.delete import DeleteCharacterRequest
+from src.business.domain.character.use_cases.add_spell import AddSpellToCharacterRequest
+from src.business.domain.character.use_cases.delete_spell import DeleteSpellFromCharacterRequest
 from src.business.domain.character_class.use_cases.list import ListCharacterClassesRequest
 from src.business.domain.spell.use_cases.list import ListSpellsRequest
 from src.business.domain.spell.use_cases.read import ReadSpellRequest
@@ -34,26 +29,34 @@ container.wire(packages=["src.business", "src.infrastructure"])
 container.init_resources()
 
 
+def authorized(x_dnd_auth: Annotated[str | None, Header()] = None):
+    if x_dnd_auth is None:
+        raise HTTPException(status_code=403, detail="x-dnd-auth header is missing")
+
+
+# @app.middleware("http")
+# async def auth_middleware(request: Request, call_next):
+#     if "X-DND-AUTH" not in request.headers:
+#         return Response(status_code=403, content="Forbidden")
+#
+#     return await call_next(request)
+
+
 @app.post("/api/auth/sign-up")
 async def create_user(mediator: Annotated[Mediator, Depends(Mediator)]):
     return await mediator.send_async(CreateUserRequest())
 
 
-@app.delete("/api/users/{user_id}")
-async def delete_user(user_id,
-                      mediator: Annotated[Mediator, Depends(Mediator)],
+@app.delete("/api/users/me")
+async def delete_user(mediator: Annotated[Mediator, Depends(Mediator)],
                       x_dnd_auth: Annotated[str | None, Header()] = None):
-    await mediator.send_async(DeleteUserRequest(user_id))  # user_id is x-dnd-auth
+    print(x_dnd_auth)
+    await mediator.send_async(DeleteUserRequest(x_dnd_auth))
 
 
-@app.get("/api/characters/")
-async def list_characters(response: Response,
-                          mediator: Annotated[Mediator, Depends(Mediator)],
+@app.get("/api/characters/", dependencies=[Depends(authorized)])
+async def list_characters(mediator: Annotated[Mediator, Depends(Mediator)],
                           x_dnd_auth: Annotated[str | None, Header()] = None):
-    if x_dnd_auth is None:
-        response.status_code = status.HTTP_401_UNAUTHORIZED
-        return
-
     characters = await mediator.send_async(ListCharactersRequest(x_dnd_auth))
     return characters
 
@@ -65,27 +68,15 @@ async def list_character_classes(mediator: Annotated[Mediator, Depends(Mediator)
 
 
 @app.post("/api/characters/", status_code=201)
-async def create_character(character: Annotated[Any, Depends(character_create_handler)],
-                           x_dnd_auth: Annotated[str | None, Header()] = None):
+async def create_character(character: Annotated[Any, Depends(character_create_handler)]):
     return character
 
 
-# @app.get("/api/characters/{character_id}")
-# async def read_character(response: Response,
-#                          character: Annotated[Any, Depends(character_handler)],
-#                          x_dnd_auth: Annotated[str | None, Header()] = None):
-#     if character is None:
-#         response.status_code = status.HTTP_404_NOT_FOUND
-#         return
-#     return character
-
-
 @app.get("/api/characters/{character_id}")
-async def read_character(character_id,
+async def read_character(character_id: UUID,
                          response: Response,
                          mediator: Annotated[Mediator, Depends(Mediator)],
                          x_dnd_auth: Annotated[str | None, Header()] = None):
-
     character = await mediator.send_async(ReadCharacterRequest(x_dnd_auth, character_id))
     if character is None:
         response.status_code = status.HTTP_404_NOT_FOUND
@@ -94,13 +85,12 @@ async def read_character(character_id,
 
 
 @app.put("/api/characters/")
-async def edit_character(character: Annotated[Any, Depends(character_edit_handler)],
-                         x_dnd_auth: Annotated[str | None, Header()] = None):
+async def edit_character(character: Annotated[Any, Depends(character_edit_handler)]):
     return character
 
 
 @app.delete("/api/characters/{character_id}")
-async def delete_character(character_id,
+async def delete_character(character_id: UUID,
                            mediator: Annotated[Mediator, Depends(Mediator)],
                            x_dnd_auth: Annotated[str | None, Header()] = None):
     await mediator.send_async(DeleteCharacterRequest(x_dnd_auth, character_id))
@@ -113,19 +103,23 @@ async def list_spells(mediator: Annotated[Mediator, Depends(Mediator)]):
 
 
 @app.post("/api/characters/{character_id}/spells/{spell_id}", status_code=201)
-async def add_spell_to_character(_: Annotated[Any, Depends(add_spell_to_character_handler)],
+async def add_spell_to_character(character_id: UUID,
+                                 spell_id: UUID,
+                                 mediator: Annotated[Mediator, Depends(Mediator)],
                                  x_dnd_auth: Annotated[str | None, Header()] = None):
-    return
+    await mediator.send_async(AddSpellToCharacterRequest(character_id, spell_id))
 
 
 @app.delete("/api/characters/{character_id}/spells/{spell_id}")
-async def delete_spell_from_character(_: Annotated[Any, Depends(delete_spell_from_character_handler)],
+async def delete_spell_from_character(character_id: UUID,
+                                      spell_id: UUID,
+                                      mediator: Annotated[Mediator, Depends(Mediator)],
                                       x_dnd_auth: Annotated[str | None, Header()] = None):
-    return
+    await mediator.send_async(DeleteSpellFromCharacterRequest(character_id, spell_id))
 
 
 @app.get("/api/spells/{spell_id}")
-async def read_spell(spell_id,
+async def read_spell(spell_id: UUID,
                      mediator: Annotated[Mediator, Depends(Mediator)]):
     spell = await mediator.send_async(ReadSpellRequest(spell_id))
     return spell

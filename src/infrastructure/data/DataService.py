@@ -5,6 +5,7 @@ from sqlalchemy.orm import selectinload
 from uuid import UUID
 
 from .dtos import User, Character, CharacterClass, Spell, CharacterSpell
+from src.business.domain.character.character import CharacterCreateDto, CharacterEditDto
 
 
 class DataService:
@@ -73,7 +74,7 @@ class DataService:
 
         return character_classes
 
-    async def create_character(self, character):
+    async def create_character(self, character: CharacterCreateDto):
         db_character = Character(id=character.id,
                                  name=character.name,
                                  user_id=character.user_id,
@@ -82,7 +83,7 @@ class DataService:
             session.add(db_character)
             await session.commit()
 
-    async def edit_character(self, character):
+    async def edit_character(self, character: CharacterEditDto):
         async with AsyncSession(self.engine) as session:
             db_character = await session.get(Character, character.id)
             db_character.id = character.id

@@ -34,9 +34,11 @@ class CharacterCreateDto:
 class CharacterEditDto:
     id: UUID
     name: str
+    user_id: UUID
     character_class_id: UUID
 
-    def __init__(self, id, name, character_class_id):
+    def __init__(self, id, name, user_id, character_class_id):
         self.id = id
         self.name = name
+        self.user_id = user_id
         self.character_class_id = character_class_id

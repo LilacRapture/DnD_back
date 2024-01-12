@@ -42,11 +42,11 @@ class CharacterService:
     #
     #     return character
 
-    async def create_character(self, character):
-        await self.data.create_character(character)
-
-    async def edit_character(self, character):
-        await self.data.edit_character(character)
+    # async def create_character(self, character):
+    #     await self.data.create_character(character)
+    #
+    # async def edit_character(self, character):
+    #     await self.data.edit_character(character)
 
     # async def delete_character(self, character_id: UUID):
     #     await self.data.delete_character(character_id)

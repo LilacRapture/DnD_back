@@ -7,8 +7,8 @@ from src.infrastructure.data.DataService import DataService
 
 
 class DeleteCharacterRequest:
-    user_id: str
-    character_id: str
+    user_id: UUID
+    character_id: UUID
 
     def __init__(self, user_id, character_id):
         self.user_id = user_id
@@ -24,6 +24,4 @@ async def delete_character_handler(user_id: UUID,
 
 @Mediator.handler
 def delete_character_handler_wrapper(request: DeleteCharacterRequest):
-    user_id = UUID(request.user_id)
-    character_id = UUID(request.character_id)
-    return delete_character_handler(user_id, character_id)
+    return delete_character_handler(request.user_id, request.character_id)

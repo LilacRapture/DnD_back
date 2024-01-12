@@ -10,8 +10,8 @@ from src.infrastructure.data.DataService import DataService
 
 
 class ReadCharacterRequest:
-    user_id: str
-    character_id: str
+    user_id: UUID
+    character_id: UUID
 
     def __init__(self, user_id, character_id):
         self.user_id = user_id
@@ -35,8 +35,6 @@ async def read_character_handler(user_id: UUID,
 
 @Mediator.handler
 def read_character_handler_wrapper(request: ReadCharacterRequest):
-    user_id = UUID(request.user_id)
-    character_id = UUID(request.character_id)
-    character = read_character_handler(user_id, character_id)
+    character = read_character_handler(request.user_id, request.character_id)
     return character
 
