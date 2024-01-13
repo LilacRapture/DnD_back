@@ -1,5 +1,6 @@
 from uuid import UUID
 from src.business.domain.character_class.CharacterClass import CharacterClass
+from automapper import mapper
 
 
 class Character:
@@ -42,3 +43,7 @@ class CharacterEditDto:
         self.name = name
         self.user_id = user_id
         self.character_class_id = character_class_id
+
+
+mapper.add_spec(Character, Character.get_fields)
+mapper.add_spec(CharacterClass, CharacterClass.get_fields)

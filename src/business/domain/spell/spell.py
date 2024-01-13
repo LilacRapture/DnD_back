@@ -1,3 +1,6 @@
+from automapper import mapper
+
+
 class Spell:
     id: str
     name: str
@@ -9,3 +12,6 @@ class Spell:
     @staticmethod
     def get_fields(cls):
         return ["id", "name"]
+
+
+mapper.add_spec(Spell, Spell.get_fields)
