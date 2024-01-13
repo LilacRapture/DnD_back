@@ -29,17 +29,15 @@ container.wire(packages=["src.business", "src.infrastructure"])
 container.init_resources()
 
 
-def authorized(x_dnd_auth: Annotated[str | None, Header()] = None):
-    if x_dnd_auth is None:
-        raise HTTPException(status_code=403, detail="x-dnd-auth header is missing")
+@app.middleware("http")
+async def auth_middleware(request: Request, call_next):
+    if request.url.path.startswith("/api/auth/"):
+        return await call_next(request)
 
+    if "X-DND-AUTH" not in request.headers:
+        return Response(status_code=403, content="Forbidden")
 
-# @app.middleware("http")
-# async def auth_middleware(request: Request, call_next):
-#     if "X-DND-AUTH" not in request.headers:
-#         return Response(status_code=403, content="Forbidden")
-#
-#     return await call_next(request)
+    return await call_next(request)
 
 
 @app.post("/api/auth/sign-up")
@@ -54,7 +52,7 @@ async def delete_user(mediator: Annotated[Mediator, Depends(Mediator)],
     await mediator.send_async(DeleteUserRequest(x_dnd_auth))
 
 
-@app.get("/api/characters/", dependencies=[Depends(authorized)])
+@app.get("/api/characters/")
 async def list_characters(mediator: Annotated[Mediator, Depends(Mediator)],
                           x_dnd_auth: Annotated[str | None, Header()] = None):
     characters = await mediator.send_async(ListCharactersRequest(x_dnd_auth))
@@ -107,6 +105,7 @@ async def add_spell_to_character(character_id: UUID,
                                  spell_id: UUID,
                                  mediator: Annotated[Mediator, Depends(Mediator)],
                                  x_dnd_auth: Annotated[str | None, Header()] = None):
+    # TODO: check auth
     await mediator.send_async(AddSpellToCharacterRequest(character_id, spell_id))
 
 
@@ -115,6 +114,7 @@ async def delete_spell_from_character(character_id: UUID,
                                       spell_id: UUID,
                                       mediator: Annotated[Mediator, Depends(Mediator)],
                                       x_dnd_auth: Annotated[str | None, Header()] = None):
+    # TODO: check auth
     await mediator.send_async(DeleteSpellFromCharacterRequest(character_id, spell_id))
 
 
