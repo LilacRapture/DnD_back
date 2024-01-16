@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: dnd-api
+    env: docker
+    region: frankfurt
+    plan: free
