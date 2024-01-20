@@ -3,13 +3,14 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import selectinload
 from uuid import UUID
+import os
 
 from .dtos import User, Character, CharacterClass, Spell, CharacterSpell
 from src.business.domain.character.character import CharacterCreateDto, CharacterEditDto
 
 
 class DataService:
-    url = 'postgresql+psycopg://admin:WQk0R4PRpUWPAoIDNcUd6IanYmeun7Vn@dpg-cm19b4en7f5s73e5k8vg-a.frankfurt-postgres.render.com/main_5owc'
+    url = os.getenv("DB_URL")
     engine = create_async_engine(url, echo=True)
 
     async def create_user(self):

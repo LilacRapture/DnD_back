@@ -1,5 +1,5 @@
 from typing import Annotated, Any
-from fastapi import FastAPI, Header, Response, status, Depends, Request, HTTPException
+from fastapi import FastAPI, Header, Response, status, Depends, Request
 import uvicorn
 from mediatr import Mediator
 from uuid import UUID

@@ -1,5 +1,6 @@
 from sqlmodel import Field, Session, SQLModel, create_engine, Relationship, UniqueConstraint
 from typing import Optional
+import os
 
 import uuid as uuid_pkg
 
@@ -64,7 +65,7 @@ class Character(ModelBase, table=True):
     spells: list["Spell"] = Relationship(back_populates='characters', link_model=CharacterSpell)
 
 
-url = f'postgresql+psycopg://admin:WQk0R4PRpUWPAoIDNcUd6IanYmeun7Vn@dpg-cm19b4en7f5s73e5k8vg-a.frankfurt-postgres.render.com/main_5owc'
+url = os.getenv("DB_URL")
 engine = create_engine(url, echo=True)
 
 
